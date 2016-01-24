@@ -5,7 +5,7 @@ import com.sun.istack.internal.NotNull;
 public class PrintNumbersInBase {
 
     /**
-     * Print numbers in a given base from 0 to 100000
+     * Print numbers in a given base from 0 to 1000000
      * Support bases from [2, 10], throw exceptions otherwise
      * Print to system out
      * <p>
@@ -78,6 +78,4 @@ public class PrintNumbersInBase {
             return currentNumber;
         }
     }
-
-
 }
