@@ -95,9 +95,14 @@ public class BinarySearchTree {
 
     private String generateNodeString(BSTNode curr, int height, int depth) {
         StringBuilder sb = new StringBuilder();
-        sb.append(" ");
+        int offset = geoSum(height - depth);
+        for(int i = 0; i < offset; i++) {
+            sb.append(" ");
+        }
         sb.append(curr.key != null ? curr.key.toString() : " ");
-        sb.append(" ");
+        for(int i = 0; i < offset; i++) {
+            sb.append(" ");
+        }
         return sb.toString();
     }
 
