@@ -1,13 +1,15 @@
 package misc;
 
 import java.util.ArrayList;
-import java.util.Deque;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.Spliterator;
 import java.util.StringJoiner;
+import java.util.function.Consumer;
 
-public class BinarySearchTree {
+public class BinarySearchTree implements Iterable<BSTNode> {
     private BSTNode root;
 
     public BinarySearchTree(BSTNode root) {
@@ -37,14 +39,16 @@ public class BinarySearchTree {
 
     private void insert(BSTNode root, BSTNode node) {
         if (node.key <= root.key) {
-            if (root.left == null)
+            if (root.left == null) {
                 root.left = node;
-            else
+                node.parent = root;
+            } else
                 insert(root.left, node);
         } else {
-            if (root.right == null)
+            if (root.right == null) {
                 root.right = node;
-            else
+                node.parent = root;
+            } else
                 insert(root.right, node);
         }
     }
@@ -89,18 +93,17 @@ public class BinarySearchTree {
                 sb.delete(0, sb.length());
             }
         }
-
         return result;
     }
 
     private String generateNodeString(BSTNode curr, int height, int depth) {
         StringBuilder sb = new StringBuilder();
         int offset = geoSum(height - depth);
-        for(int i = 0; i < offset; i++) {
+        for (int i = 0; i < offset; i++) {
             sb.append(" ");
         }
         sb.append(curr.key != null ? curr.key.toString() : " ");
-        for(int i = 0; i < offset; i++) {
+        for (int i = 0; i < offset; i++) {
             sb.append(" ");
         }
         return sb.toString();
@@ -128,5 +131,103 @@ public class BinarySearchTree {
             return leftHeight + 1;
         else
             return rightHeight + 1;
+    }
+
+    public static List<BSTNode> inorderTraversal(BSTNode root) {
+        BSTNode curr = root;
+        BSTNode last = null;
+        List<BSTNode> out = new ArrayList<>();
+        while (curr != null) {
+            // go all the way left
+            while (curr.left != null && (last == null || last.key.compareTo(curr.left.key) < 0)) {
+                curr = curr.left;
+            }
+            // only "visit" the current node if it hasnt been visited before to prevent adding nodes once as they are
+            // traversed and again when they're traversed back via parent pointers
+            if (last == null || last.key.compareTo(curr.key) < 0) {
+                out.add(curr);
+                last = curr;
+            }
+            // go right if possible, otherwise head back up the tree
+            // don't need to check if last is null because before we go right, we will have visited the current node
+            if (curr.right != null && last.key.compareTo(curr.right.key) < 0) {
+                curr = curr.right;
+            } else {
+                // when done with iterating, goes back up to the root until null
+                curr = curr.parent;
+            }
+        }
+        return out;
+    }
+
+    @Override
+    public Iterator<BSTNode> iterator() {
+        return new InOrderBSTIterator(root);
+    }
+
+    @Override
+    public void forEach(Consumer<? super BSTNode> action) {
+        throw new RuntimeException("not implemented yet");
+    }
+
+    @Override
+    public Spliterator<BSTNode> spliterator() {
+        throw new RuntimeException("not implemented yet");
+    }
+
+    class InOrderBSTIterator implements Iterator<BSTNode> {
+
+        private BSTNode curr;
+        private BSTNode last = null;
+
+        public InOrderBSTIterator(BSTNode root) {
+            this.curr = root;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return curr != null;
+        }
+
+        private BSTNode moveToNext() {
+            BSTNode next = null;
+            while (curr != null) {
+                // go all the way left
+                while (curr.left != null && (last == null || last.key.compareTo(curr.left.key) < 0)) {
+                    curr = curr.left;
+                }
+                // only "visit" the current node if it hasnt been visited before to prevent adding nodes once as they are
+                // traversed and again when they're traversed back via parent pointers
+                if (last == null || last.key.compareTo(curr.key) < 0) {
+                    last = curr;
+                    next = curr;
+                    break;
+                }
+                // go right if possible, otherwise head back up the tree
+                // don't need to check if last is null because before we go right, we will have visited the current node
+                if (curr.right != null && last.key.compareTo(curr.right.key) < 0) {
+                    curr = curr.right;
+                } else {
+                    // when done with iterating, goes back up to the root until null
+                    curr = curr.parent;
+                }
+            }
+            return next;
+        }
+
+        @Override
+        public BSTNode next() {
+            return moveToNext();
+        }
+
+        @Override
+        public void remove() {
+            throw new RuntimeException("not implemented yet");
+        }
+
+        @Override
+        public void forEachRemaining(Consumer<? super BSTNode> action) {
+            throw new RuntimeException("not implemented yet");
+        }
     }
 }
