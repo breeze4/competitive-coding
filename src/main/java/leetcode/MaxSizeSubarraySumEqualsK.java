@@ -57,7 +57,6 @@ public class MaxSizeSubarraySumEqualsK {
             long binomialCoefficient = CombinatoricsUtils.binomialCoefficient(N, i);
             estimatedOps += binomialCoefficient;
         }
-        int logN = log(N, 2);
         while (start <= end) {
             operations++;
             Node curr = nodes.poll();
@@ -80,27 +79,6 @@ public class MaxSizeSubarraySumEqualsK {
         }
         System.out.println(String.format("no match found: %s elements, performed %s traversals, worst case %s", N, operations, estimatedOps));
         return 0;
-    }
-
-    public static int sq(int n) {
-        int i = n;
-        int sq = 0;
-        int count = 0;
-
-        while (i > 0) {
-            if ((i & 1) == 1) {
-                sq += n << count;
-            }
-
-            i = i >> 1;
-            count++;
-        }
-
-        return sq;
-    }
-
-    static int log(int x, int base) {
-        return (int) (Math.log(x) / Math.log(base));
     }
 
     class Node {
